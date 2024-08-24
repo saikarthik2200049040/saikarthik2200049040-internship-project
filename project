@@ -1,0 +1,38 @@
+#include <LiquidCrystal.h>
+// Define pin assignments
+const int soilMoisturePin = A0;
+const int pumpControlPin = 9;
+const int rsPin = 12;
+const int enPin = 11;
+const int d4Pin = 5;
+const int d5Pin = 4;
+const int d6Pin = 3;
+const int d7Pin = 2;
+const int contrastPin = A1;
+// Define moisture thresholds
+const int dryThreshold = 700; // Adjust this value based on your soil and sensor characteristics
+// Define pump operation duration in milliseconds
+const int pumpDuration = 5000; // 5 seconds
+LiquidCrystal lcd(rsPin, enPin, d4Pin, d5Pin, d6Pin, d7Pin);
+void setup() {
+ pinMode(soilMoisturePin, INPUT);
+ pinMode(pumpControlPin, OUTPUT);
+ Serial.begin(9600);
+ lcd.begin(16, 2);
+ lcd.setCursor(0, 0);
+ lcd.print("Soil Moisture:");
+}
+void loop() {
+ int soilMoisture = analogRead(soilMoisturePin);
+ lcd.setCursor(0, 1);
+ lcd.print(soilMoisture);
+ Serial.print("Soil Moisture: ");
+ Serial.println(soilMoisture);
+ if (soilMoisture > dryThreshold) {
+ // Soil is dry, turn on the pump
+ digitalWrite(pumpControlPin, HIGH);
+ delay(pumpDuration);
+ digitalWrite(pumpControlPin, LOW);
+ }
+ delay(1000); // Delay for a second to avoid rapid sensor readings
+}
